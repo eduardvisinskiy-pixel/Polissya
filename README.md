@@ -56,7 +56,7 @@ const ADMIN_PIN = '2002';
 1. **Без бекенду:** внести правки в `data.js` і закомітити (адмінка тоді — інструмент попереднього перегляду).
 2. **З бекендом:** підключити API або headless CMS замість `localStorage` — у `app.js` за це відповідають функції `load()` / `save()`, замінити потрібно тільки їх.
 
-Ключі в localStorage: `polissya.promos.v5`, `polissya.news.v1`, `polissya.jobs.v1`, `polissya.pizzerias.v2`, `polissya.pizzas.v1`.
+Ключі в localStorage: `polissya.promos.v5`, `polissya.news.v1`, `polissya.jobs.v1`, `polissya.pizzerias.v2`, `polissya.pizzas.v2`.
 
 ## Розміри фото
 

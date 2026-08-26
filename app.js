@@ -8,7 +8,7 @@ const KEYS = {
   news: 'polissya.news.v1',
   jobs: 'polissya.jobs.v1',
   zones: 'polissya.pizzerias.v2',
-  pizzas: 'polissya.pizzas.v1',
+  pizzas: 'polissya.pizzas.v2',
   session: 'polissya.admin.session'
 };
 
@@ -213,9 +213,7 @@ function pageHome() {
 
 function pageAktsii() {
   const list = state.items.filter(it =>
-    (state.tab === 'active' ? it.status === 'active' : it.status !== 'active') &&
-    (state.type === 'all' || it.type === state.type));
-  const activeCount = state.items.filter(i => i.status === 'active').length;
+    it.status === 'active' && (state.type === 'all' || it.type === state.type));
   const heroCover = (state.items.find(i => i.status === 'active') || {}).cover || '';
   const chips = [{ id: 'all', label: 'Усі види' }].concat(TYPES);
 
@@ -225,7 +223,7 @@ function pageAktsii() {
       <div>
         <div class="badge-hot">КАТАЛОГ ДІЄ ДО 31.08</div>
         <h1 style="font-size:clamp(27px,5.6vw,40px);line-height:1.08;margin-bottom:14px">Акції серпня</h1>
-        <p style="max-width:440px">${activeCount} активні каталоги. Гортайте сторінки листівки просто на сайті — без завантаження PDF.</p>
+        <p style="max-width:440px">Гортайте сторінки листівки просто на сайті — без завантаження PDF.</p>
       </div>
       <div class="hero-cover">
         ${heroCover ? `<img src="${esc(heroCover)}" alt="Каталог акцій">`
@@ -233,12 +231,7 @@ function pageAktsii() {
       </div>
     </div>
 
-    <div class="tabs" role="tablist">
-      <button role="tab" aria-selected="${state.tab === 'active'}" data-tab="active" type="button">Актуальні</button>
-      <button role="tab" aria-selected="${state.tab === 'archive'}" data-tab="archive" type="button">Архів</button>
-    </div>
-
-    <div class="filters">
+    <div class="filters" style="margin-top:0">
       ${chips.map(c => `<button class="chip" aria-pressed="${state.type === c.id}" data-type="${esc(c.id)}" type="button">${esc(c.label)}</button>`).join('')}
     </div>
 
@@ -424,6 +417,7 @@ function pagePizza() {
           <div class="eyebrow">Меню</div>
           <h2 style="font-size:clamp(24px,4.6vw,30px)">Наші піци</h2>
         </div>
+        <span style="font-size:14px;color:var(--muted-2);max-width:340px">Ціни орієнтовні — актуальні уточнюйте за телефоном піцерії.</span>
       </div>
       ${state.pizzas.length
         ? `<div class="grid grid--menu">
@@ -936,12 +930,32 @@ function lock() {
   go('home');
 }
 
+/* ---------- burger nav ---------- */
+function closeNav() {
+  const nav = $('#nav'), b = $('#burger');
+  if (nav) nav.classList.remove('nav--open');
+  if (b) b.setAttribute('aria-expanded', 'false');
+  document.body.style.overflow = '';
+}
+function toggleNav() {
+  const nav = $('#nav'), b = $('#burger');
+  if (!nav) return;
+  const open = nav.classList.toggle('nav--open');
+  if (b) b.setAttribute('aria-expanded', String(open));
+  document.body.style.overflow = open ? 'hidden' : '';
+}
+
 /* ---------- events ---------- */
 document.addEventListener('click', async e => {
-  const t = e.target.closest('[data-nav],[data-open],[data-tab],[data-type],[data-step],[data-page],[data-store],[data-admintab],[data-new],[data-edit],[data-remove],[data-save],[data-cancel],#lockAdmin,#pinSubmit,#pinCancel,#secretTap');
-  if (!t) return;
+  const t = e.target.closest('[data-nav],[data-open],[data-tab],[data-type],[data-step],[data-page],[data-store],[data-admintab],[data-new],[data-edit],[data-remove],[data-save],[data-cancel],#lockAdmin,#pinSubmit,#pinCancel,#secretTap,#burger');
+  if (!t) {
+    const nav = $('#nav');
+    if (nav && nav.classList.contains('nav--open') && !e.target.closest('#nav')) closeNav();
+    return;
+  }
 
-  if (t.dataset.nav) { go(t.dataset.nav); return; }
+  if (t.dataset.nav) { closeNav(); go(t.dataset.nav); return; }
+  if (t.id === 'burger') { toggleNav(); return; }
 
   if (t.dataset.open) {
     state.sel = state.items.find(i => String(i.id) === t.dataset.open)?.id ?? null;
@@ -1011,6 +1025,7 @@ document.addEventListener('keydown', e => {
     else { state.pinOpen = true; state.pinError = false; render(); }
     return;
   }
+  if (e.key === 'Escape') { closeNav(); }
   if (e.key === 'Enter' && e.target.id === 'pinInput') unlock(e.target.value);
   if (state.page === 'single' && (e.key === 'ArrowLeft' || e.key === 'ArrowRight')) {
     const cur = state.items.find(i => i.id === state.sel) || state.items[0];
