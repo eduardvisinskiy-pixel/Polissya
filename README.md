@@ -35,6 +35,8 @@ python3 -m http.server 8000
 - клавіші **Ctrl + Shift + A**
 - **5 кліків** по рядку «© 2026 ТОВ ТК «Полісся-Продукт»» у футері
 
+Вхід **не запам'ятовується**: після перезавантаження сторінки кнопка «Адмінка» знову зникає й код потрібно ввести ще раз.
+
 Далі — службовий код. Змінюється в `data.js`:
 
 ```js
@@ -54,7 +56,7 @@ const ADMIN_PIN = '2002';
 1. **Без бекенду:** внести правки в `data.js` і закомітити (адмінка тоді — інструмент попереднього перегляду).
 2. **З бекендом:** підключити API або headless CMS замість `localStorage` — у `app.js` за це відповідають функції `load()` / `save()`, замінити потрібно тільки їх.
 
-Ключі в localStorage: `polissya.promos.v5`, `polissya.news.v1`, `polissya.jobs.v1`, `polissya.pizzerias.v1`, `polissya.pizzas.v1`.
+Ключі в localStorage: `polissya.promos.v5`, `polissya.news.v1`, `polissya.jobs.v1`, `polissya.pizzerias.v2`, `polissya.pizzas.v1`.
 
 ## Розміри фото
 

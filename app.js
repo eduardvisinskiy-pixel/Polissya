@@ -7,7 +7,7 @@ const KEYS = {
   promos: 'polissya.promos.v5',
   news: 'polissya.news.v1',
   jobs: 'polissya.jobs.v1',
-  zones: 'polissya.pizzerias.v1',
+  zones: 'polissya.pizzerias.v2',
   pizzas: 'polissya.pizzas.v1',
   session: 'polissya.admin.session'
 };
@@ -66,7 +66,9 @@ const state = {
   draft: {}
 };
 
-try { state.unlocked = sessionStorage.getItem(KEYS.session) === '1'; } catch (e) {}
+/* Вхід не зберігається: після перезавантаження сторінки потрібен код знову,
+   щоб покупець ніколи не бачив кнопки «Адмінка». */
+try { sessionStorage.removeItem(KEYS.session); } catch (e) {}
 
 function go(page) {
   state.page = page;
@@ -925,7 +927,6 @@ function unlock(code) {
   state.pinOpen = false;
   state.pinError = false;
   state.taps = 0;
-  try { sessionStorage.setItem(KEYS.session, '1'); } catch (e) {}
   go('admin');
 }
 
