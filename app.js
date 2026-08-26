@@ -137,7 +137,7 @@ function pageHome() {
           </div>
         </div>
         <div class="hero__media">
-          <div class="frame frame--hero"><img src="${esc(PHOTOS.hero)}" alt="Покупці у магазині Полісся-Продукт"></div>
+          <div class="frame frame--hero"><img src="${esc(PHOTOS.hero)}" alt="Покупці у магазині Полісся-Продукт" loading="eager"></div>
           <div class="hero__badge">
             <i>%</i>
             <div><b>Акції у додатку</b><span>Кешбек і персональні ціни</span></div>
@@ -408,7 +408,7 @@ function pagePizza() {
         <span style="font-size:14px;color:var(--muted-2);max-width:340px">Кожен магазин приймає замовлення на свій номер — так швидше.</span>
       </div>
       ${state.zones.length
-        ? `<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr));gap:14px">
+        ? `<div class="grid grid--zones">
             ${state.zones.map(z => `
               <div class="zone">
                 <b>${esc(z.city)}</b><span>${esc(z.addr)}</span>
@@ -426,7 +426,7 @@ function pagePizza() {
         </div>
       </div>
       ${state.pizzas.length
-        ? `<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr));align-items:start">
+        ? `<div class="grid grid--menu">
             ${state.pizzas.map(p => `
               <div class="pizza">
                 <div class="pizza__media">${p.photo ? `<img src="${esc(p.photo)}" alt="${esc(p.name)}">` : ''}</div>
@@ -487,7 +487,7 @@ function pageApp() {
     <section class="section">
       <div class="eyebrow">Як це працює</div>
       <h2 style="margin-bottom:26px;font-size:clamp(24px,4.6vw,34px)">Бонуси та кешбек</h2>
-      <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(min(100%,270px),1fr))">
+      <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(min(100%,270px),1fr));align-items:stretch">
         ${facts.map(([t, d]) => `<div class="card"><div class="card__title" style="margin-bottom:8px">${esc(t)}</div><p class="card__text" style="font-size:14.5px;line-height:1.65">${esc(d)}</p></div>`).join('')}
       </div>
       <p class="fine">* Кешбек нараховується на всі категорії товарів, окрім тютюну.</p>
