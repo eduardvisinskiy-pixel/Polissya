@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Магазини Полісся-Продукт</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha384-sHL9NAb7lN7rfvG5lfHpm643Xkcjzp4jFvuavGOndn6pjVqS6ny56CAt3nsEVT4H" crossorigin="anonymous">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha384-cxOPjt7s7Iz04uaHJceBmS+qpjv2JkIHNVcuOrM+YHwZOmJGBXI00mdUXEq65HTH" crossorigin="anonymous"></script>
+<style>
+  html,body,#map{margin:0;height:100%;background:#eae7dc}
+  .leaflet-container{font-family:Onest,system-ui,sans-serif}
+  .pin{width:26px;height:26px;border-radius:50% 50% 50% 4px;transform:rotate(-45deg);background:#c04a20;border:2.5px solid #fff;box-shadow:0 3px 10px rgba(43,31,26,.35)}
+  .pin.on{background:#2b1f1a}
+  .leaflet-popup-content-wrapper{border-radius:14px;box-shadow:0 12px 30px rgba(43,31,26,.18)}
+  .leaflet-popup-content{margin:14px 16px;font-size:13.5px;line-height:1.5;color:#2b1f1a}
+  .leaflet-popup-content b{display:block;font-size:15px;margin-bottom:4px}
+  .leaflet-popup-content span{color:#7a6a62}
+</style>
+</head>
+<body>
+<div id="map"></div>
+<script>
+const STORES = [
+  {id:'zt-1', city:'Житомир', name:'Полісся-Продукт · Київська', addr:'вул. Київська, 77', hours:'08:00 – 22:00', ll:[50.2603,28.6712]},
+  {id:'zt-2', city:'Житомир', name:'Полісся-Продукт · Велика Бердичівська', addr:'вул. В. Бердичівська, 40', hours:'07:30 – 23:00', ll:[50.2513,28.6553]},
+  {id:'zt-3', city:'Житомир', name:'Полісся-Продукт · Хлібна', addr:'вул. Хлібна, 14', hours:'08:00 – 21:00', ll:[50.2465,28.6801]},
+  {id:'bd-1', city:'Бердичів', name:'Полісся-Продукт · Європейська', addr:'вул. Європейська, 25', hours:'08:00 – 22:00', ll:[49.8918,28.5988]},
+  {id:'bd-2', city:'Бердичів', name:'Полісся-Продукт · Житомирська', addr:'вул. Житомирська, 8', hours:'08:00 – 21:00', ll:[49.9005,28.6062]},
+  {id:'ko-1', city:'Коростень', name:'Полісся-Продукт · Грушевського', addr:'вул. Грушевського, 51', hours:'08:00 – 22:00', ll:[50.9503,28.6367]},
+  {id:'zv-1', city:'Звягель', name:'Полісся-Продукт · Соборності', addr:'вул. Соборності, 12', hours:'08:00 – 22:00', ll:[50.5936,27.6229]},
+  {id:'ml-1', city:'Малин', name:'Полісся-Продукт · Приходька', addr:'вул. Приходька, 3', hours:'08:00 – 21:00', ll:[50.7726,29.2699]},
+  {id:'ov-1', city:'Овруч', name:'Полісся-Продукт · Тараса Шевченка', addr:'вул. Т. Шевченка, 22', hours:'08:00 – 21:00', ll:[51.3242,28.8069]},
+  {id:'rd-1', city:'Радомишль', name:'Полісся-Продукт ·大 Житомирська', addr:'вул. Житомирська, 9', hours:'08:00 – 21:00', ll:[50.4964,29.2265]},
+  {id:'ba-1', city:'Баранівка', name:'Полісся-Продукт · Соборна', addr:'вул. Соборна, 41', hours:'08:00 – 20:00', ll:[50.2999,27.6742]},
+  {id:'ol-1', city:'Олевськ', name:'Полісся-Продукт · Володимирська', addr:'вул. Володимирська, 6', hours:'08:00 – 20:00', ll:[51.2244,27.6467]},
+  {id:'an-1', city:'Андрушівка', name:'Полісся-Продукт · Тітова', addr:'вул. Тітова, 17', hours:'08:00 – 20:00', ll:[50.0189,28.9987]},
+  {id:'ch-1', city:'Чуднів', name:'Полісся-Продукт · Героїв Майдану', addr:'вул. Героїв Майдану, 2', hours:'08:00 – 20:00', ll:[50.0522,28.1147]},
+  {id:'pp-1', city:'Попільня', name:'Полісся-Продукт · Центральна', addr:'вул. Центральна, 30', hours:'08:00 – 20:00', ll:[49.9906,29.4436]}
+];
+STORES.find(s => s.id === 'rd-1').name = 'Полісся-Продукт · Житомирська';
+
+const map = L.map('map', { scrollWheelZoom: false, zoomControl: true });
+L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  attribution: '© OpenStreetMap contributors', maxZoom: 18
+}).addTo(map);
+
+const markers = {};
+STORES.forEach(s => {
+  const m = L.marker(s.ll, { icon: L.divIcon({ className: '', html: '<div class="pin"></div>', iconSize: [26,26], iconAnchor: [13,26], popupAnchor: [0,-24] }) })
+    .addTo(map)
+    .bindPopup('<b>' + s.name + '</b><span>' + s.addr + ', ' + s.city + '<br>Щодня ' + s.hours + '</span>');
+  markers[s.id] = m;
+  m.on('click', () => parent.postMessage({ type: 'store-selected', id: s.id }, '*'));
+});
+map.fitBounds(L.latLngBounds(STORES.map(s => s.ll)).pad(0.12));
+
+addEventListener('message', e => {
+  const d = e.data || {};
+  if (d.type === 'focus-store' && markers[d.id]) {
+    document.querySelectorAll('.pin').forEach(p => p.classList.remove('on'));
+    const m = markers[d.id];
+    map.flyTo(m.getLatLng(), 13, { duration: .7 });
+    m.openPopup();
+    const el = m.getElement && m.getElement();
+    if (el) el.querySelector('.pin').classList.add('on');
+  }
+  if (d.type === 'fit-all') map.fitBounds(L.latLngBounds(STORES.map(s => s.ll)).pad(0.12));
+});
+parent.postMessage({ type: 'map-ready', stores: STORES }, '*');
+</script>
+</body>
+</html>
